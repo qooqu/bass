@@ -14,6 +14,7 @@ import {
   TextField,
   Select,
   MenuItem,
+  useMediaQuery,
 } from '@mui/material'
 
 const theme = createTheme({
@@ -381,6 +382,11 @@ const BluegrassBass = () => {
     setTrigger(trigger + 1) // Trigger re-render
   }
 
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm')) // Determine if the screen size is small
+  const keys = Object.keys(scales)
+  const firstSixKeys = keys.slice(0, 6)
+  const remainingKeys = keys.slice(6)
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -395,52 +401,142 @@ const BluegrassBass = () => {
         <h1>Bluegrass Bass</h1>
         <FormControl component="fieldset">
           <FormLabel component="legend">Key:</FormLabel>
-          <ToggleButtonGroup
-            value={keyRef.current}
-            exclusive
-            onChange={updateKey}
-            aria-label="key"
-            sx={{
-              display: 'flex',
-              flexWrap: 'wrap', // Enable wrapping
-              // gap: 1, // Optional: Add some gap between buttons
-            }}
+          {isSmallScreen ? (
+            <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            gap={2} // Vertical gap between the two ToggleButtonGroups
           >
-            {Object.keys(scales).map(key => (
-              <ToggleButton
-                key={key}
-                value={key}
-                aria-label={key}
-                sx={{
-                  color: 'white',
-                  backgroundColor: 'primary.main',
-                  '&.Mui-selected': {
-                    backgroundColor: 'secondary.main',
+            <ToggleButtonGroup
+              value={keyRef.current}
+              exclusive
+              onChange={updateKey}
+              aria-label="key"
+              fullWidth
+            >
+              {firstSixKeys.map((key, index) => (
+                <ToggleButton
+                  key={key}
+                  value={key}
+                  aria-label={key}
+                  sx={{
                     color: 'white',
-                  },
-                  '&:hover': {
-                    backgroundColor: 'primary.dark',
-                  },
-                  fontFamily: 'inherit',
-                  fontSize: 'inherit',
-                  textTransform: 'none', // Add this line to prevent all caps
-                  position: 'relative',
-                  '&:not(:last-child)::after': {
-                    content: '""',
-                    position: 'absolute',
-                    right: '-0.5px',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    width: '1px',
-                    height: '60%',
-                    backgroundColor: 'rgba(255, 255, 255, 0.5)',
-                  },
-                }}
-              >
-                {key}
-              </ToggleButton>
-            ))}
-          </ToggleButtonGroup>{' '}
+                    backgroundColor: 'primary.main',
+                    '&.Mui-selected': {
+                      backgroundColor: 'secondary.main',
+                      color: 'white',
+                    },
+                    '&:hover': {
+                      backgroundColor: 'primary.dark',
+                    },
+                    fontFamily: 'inherit',
+                    fontSize: 'inherit',
+                    textTransform: 'none', // Add this line to prevent all caps
+                    position: 'relative',
+                    '&:not(:last-child)::after': {
+                      content: '""',
+                      position: 'absolute',
+                      right: '-0.5px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      width: '1px',
+                      height: '60%',
+                      backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                    },
+                  }}
+                >
+                  {key}
+                </ToggleButton>
+              ))}
+            </ToggleButtonGroup>
+            <ToggleButtonGroup
+              value={keyRef.current}
+              exclusive
+              onChange={updateKey}
+              aria-label="key"
+              fullWidth
+            >
+              {remainingKeys.map((key, index) => (
+                <ToggleButton
+                  key={key}
+                  value={key}
+                  aria-label={key}
+                  sx={{
+                    color: 'white',
+                    backgroundColor: 'primary.main',
+                    '&.Mui-selected': {
+                      backgroundColor: 'secondary.main',
+                      color: 'white',
+                    },
+                    '&:hover': {
+                      backgroundColor: 'primary.dark',
+                    },
+                    fontFamily: 'inherit',
+                    fontSize: 'inherit',
+                    textTransform: 'none', // Add this line to prevent all caps
+                    position: 'relative',
+                    '&:not(:last-child)::after': {
+                      content: '""',
+                      position: 'absolute',
+                      right: '-0.5px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      width: '1px',
+                      height: '60%',
+                      backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                    },
+                  }}
+                >
+                  {key}
+                </ToggleButton>
+              ))}
+            </ToggleButtonGroup>
+          </Box>
+          ) : (
+            <ToggleButtonGroup
+              value={keyRef.current}
+              exclusive
+              onChange={updateKey}
+              aria-label="key"
+            >
+              {Object.keys(scales).map(key => (
+                <ToggleButton
+                  key={key}
+                  value={key}
+                  aria-label={key}
+                  sx={{
+                    color: 'white',
+                    backgroundColor: 'primary.main',
+                    '&.Mui-selected': {
+                      backgroundColor: 'secondary.main',
+                      color: 'white',
+                    },
+                    '&:hover': {
+                      backgroundColor: 'primary.dark',
+                    },
+                    fontFamily: 'inherit',
+                    fontSize: 'inherit',
+                    textTransform: 'none', // Add this line to prevent all caps
+                    position: 'relative',
+                    '&:not(:last-child)::after': {
+                      content: '""',
+                      position: 'absolute',
+                      right: '-0.5px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      width: '1px',
+                      height: '60%',
+                      backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                    },
+                  }}
+                >
+                  {key}
+                </ToggleButton>
+              ))}
+            </ToggleButtonGroup>
+          )}
         </FormControl>
         <p id="currentChordRef">Current chord: {currentChord}</p>
         <div className="row">
