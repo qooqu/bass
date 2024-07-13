@@ -400,6 +400,11 @@ const BluegrassBass = () => {
             exclusive
             onChange={updateKey}
             aria-label="key"
+            sx={{
+              display: 'flex',
+              flexWrap: 'wrap', // Enable wrapping
+              // gap: 1, // Optional: Add some gap between buttons
+            }}
           >
             {Object.keys(scales).map(key => (
               <ToggleButton
@@ -419,6 +424,17 @@ const BluegrassBass = () => {
                   fontFamily: 'inherit',
                   fontSize: 'inherit',
                   textTransform: 'none', // Add this line to prevent all caps
+                  position: 'relative',
+                  '&:not(:last-child)::after': {
+                    content: '""',
+                    position: 'absolute',
+                    right: '-0.5px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    width: '1px',
+                    height: '60%',
+                    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                  },
                 }}
               >
                 {key}
