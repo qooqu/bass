@@ -396,8 +396,38 @@ const BluegrassBass = () => {
         justifyContent="center"
         minHeight="100vh"
         padding="20px"
+        position="relative"
       >
         <h1>Bluegrass Bass</h1>
+        {!audioContextRef.current && (
+          <>
+            <Box
+              position="absolute"
+              top="0"
+              left="0"
+              width="100%"
+              height="100%"
+              bgcolor="rgba(0, 0, 0, 0.5)" // Semi-transparent background
+              zIndex="modal"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <Button variant="contained" color="primary" onClick={stopLoop}>
+                enable sound
+              </Button>
+            </Box>
+            <Box
+              position="absolute"
+              top="0"
+              left="0"
+              width="100%"
+              height="100%"
+              zIndex="tooltip"
+              style={{ pointerEvents: 'none' }} // Make content unclickable
+            />
+          </>
+        )}
         <FormControl component="fieldset">
           <FormLabel component="legend">Key:</FormLabel>
           {isSmallScreen ? (
