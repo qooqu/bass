@@ -586,12 +586,6 @@ const BluegrassBass = () => {
             Stop
           </Button>
         </Box>
-        <p>
-          bass samples from{' '}
-          <a href="https://theremin.music.uiowa.edu/MIS-Pitches-2012/MISDoubleBass2012.html">
-            here
-          </a>
-        </p>
       </Box>
     </ThemeProvider>
   )
