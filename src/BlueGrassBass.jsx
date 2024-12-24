@@ -114,46 +114,46 @@ const noteMap = {
 }
 
 const songs = {
-  'old home place': [
-    1, 1, 3, 3, 4, 4, 1, 1, 1, 1, 1, 1, 5, 5, 5, 5, 1, 1, 3, 3, 4, 4, 1, 1, 1,
-    1, 5, 5, 1, 1, 1, 1, 5, 5, 5, 5, 1, 1, 1, 1, 2, 2, 2, 2, 5, 5, 5, 5, 1, 1,
-    3, 3, 4, 4, 1, 1, 1, 1, 5, 5, 1, 1, 1, 1,
-  ],
-  'new river train': [
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 5, 5, 5, 1, 1, 1, 1, 4, 4, 4, 4, 5,
-    5, 5, 5, 1, 1, 1, 1,
-  ],
-  'more pretty girls than one': [
-    1, 1, 5, 5, 1, 1, 1, 1, 4, 4, 4, 4, 1, 1, 1, 1, 4, 4, 4, 4, 1, 1, 1, 1, 1,
-    1, 5, 5, 1, 1, 1, 1,
-  ],
-  'cherokee shuffle': [
-    1, 1, 1, 1, 1, 1, 6, 6, 4, 4, 1, 1, 1, 5, 1, 1, 1, 1, 1, 1, 1, 1, 6, 6, 4,
-    4, 1, 1, 1, 5, 1, 1, 4, 4, 1, 1, 4, 4, 1, 1, 4, 4, 1, 1, 1, 1, 6, 6, 4, 5,
-    1, 1, 4, 4, 1, 1, 4, 4, 1, 1, 4, 4, 1, 1, 1, 1, 6, 6, 4, 5, 1, 1,
-  ],
-  'st anns reel': [
-    1, 1, 1, 1, 4, 4, 1, 1, 1, 1, 1, 1, 4, 5, 1, 1, 1, 1, 1, 1, 4, 4, 1, 1, 1,
-    1, 1, 1, 4, 5, 1, 1, 1, 1, 2, 2, 5, 5, 1, 1, 6, 6, 4, 4, 5, 5, 1, 1, 1, 1,
-    2, 2, 5, 5, 1, 1, 6, 6, 4, 4, 5, 5, 1, 1,
-  ],
-  '99 years': [
-    1, 1, 1, 1, 5, 5, 5, 5, 5, 5, 5, 5, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4, 4, 4, 1,
-    1, 5, 5, 1, 1, 1, 1,
-  ],
-  'blue night': [
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4, 4, 4, 1, 1, 4, 4, 1, 1, 1, 1, 5,
-    5, 5, 5, 1, 1, 1, 1,
-  ],
-  'dark hollow': [
-    1, 1, 5, 5, 1, 1, 1, 1, 1, 1, 4, 4, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4, 4, 4, 1,
-    1, 5, 5, 1, 1, 1, 1,
-  ],
-  'someday you will change your mind': [
-    1, 1, 7, 7, 4, 4, 4, 4, 5, 5, 5, 5, 1, 1, 1, 1, 1, 1, 7, 7, 4, 4, 4, 4, 5,
-    5, 5, 5, 1, 1, 1, 1, 5, 5, 5, 5, 1, 1, 1, 1, 2, 2, 2, 2, 5, 5, 5, 5, 1, 1,
-    7, 7, 4, 4, 4, 4, 5, 5, 5, 5, 1, 1, 1, 1,
-  ],
+  'old home place': {
+    'pattern': ['verse', 'verse', 'chorus'],
+    'verse': [1, 1, 3, 3, 4, 4, 1, 1, 1, 1, 1, 1, 5, 5, 5, 5, 1, 1, 3, 3, 4, 4, 1, 1, 1, 1, 5, 5, 1, 1, 1, 1],
+    'chorus': [5, 5, 5, 5, 1, 1, 1, 1, 2, 2, 2, 2, 5, 5, 5, 5, 1, 1, 3, 3, 4, 4, 1, 1, 1, 1, 5, 5, 1, 1, 1, 1]
+  },
+  'new river train': {
+    'pattern': ['A'],
+    'A': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 5, 5, 5, 1, 1, 1, 1, 4, 4, 4, 4, 5, 5, 5, 5, 1, 1, 1, 1],
+  },
+  'more pretty girls than one': {
+    'pattern': ['A'],
+    'A': [1, 1, 5, 5, 1, 1, 1, 1, 4, 4, 4, 4, 1, 1, 1, 1, 4, 4, 4, 4, 1, 1, 1, 1, 1, 1, 5, 5, 1, 1, 1, 1],
+  },
+  'cherokee shuffle': {
+    'pattern': ['A', 'A', 'B', 'B'],
+    'A': [1, 1, 1, 1, 1, 1, 6, 6, 4, 4, 1, 1, 1, 5, 1, 1],
+    'B': [4, 4, 1, 1, 4, 4, 1, 1, 4, 4, 1, 1, 1, 1, 6, 6, 4, 5, 1, 1]
+  },
+  'st anns reel': {
+    'pattern': ['A', 'A', 'B', 'B'],
+    'A': [1, 1, 1, 1, 4, 4, 1, 1, 1, 1, 1, 1, 4, 5, 1, 1],
+    'B': [1, 1, 2, 2, 5, 5, 1, 1, 6, 6, 4, 4, 5, 5, 1, 1]
+  },
+  '99 years': {
+    'pattern': ['A'],
+    'A': [1, 1, 1, 1, 5, 5, 5, 5, 5, 5, 5, 5, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4, 4, 4, 1, 1, 5, 5, 1, 1, 1, 1]
+  },
+  'blue night': {
+    'pattern': ['A'],
+    'A': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4, 4, 4, 1, 1, 4, 4, 1, 1, 1, 1, 5, 5, 5, 5, 1, 1, 1, 1]
+  },
+  'dark hollow': {
+    'pattern': ['A'],
+    'A': [1, 1, 5, 5, 1, 1, 1, 1, 1, 1, 4, 4, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4, 4, 4, 1, 1, 5, 5, 1, 1, 1, 1]
+  },
+  'someday you will change your mind': {
+    'pattern': ['A', 'A', 'B', 'A'],
+    'A': [1, 1, 7, 7, 4, 4, 4, 4, 5, 5, 5, 5, 1, 1, 1, 1],
+    'B': [5, 5, 5, 5, 1, 1, 1, 1, 2, 2, 2, 2, 5, 5, 5, 5],
+  },
 }
 
 const BluegrassBass = () => {
@@ -164,7 +164,8 @@ const BluegrassBass = () => {
   const audioContextRef = useRef(null)
   const isLoopRunningRef = useRef(false)
   const selectedSongRef = useRef('old home place')
-  const songIndexRef = useRef(-1)
+  const patternIndexRef = useRef(-1)
+  const chordsIndexRef = useRef(-1)
   const keyRef = useRef('C')
   const currentChordRef = useRef(null)
   const playRootRef = useRef(true)
@@ -180,7 +181,8 @@ const BluegrassBass = () => {
   const countInEnabledRef = useRef(true)
 
   const init = () => {
-    songIndexRef.current = -1
+    patternIndexRef.current = -1
+    chordsIndexRef.current = -1
     currentChordRef.current = null
     playRootRef.current = true
     nextScaleDegreeRef.current = null
@@ -227,10 +229,28 @@ const BluegrassBass = () => {
 
   const getScaleDegreeFromSong = () => {
     previousScaleDegreeRef.current = nextScaleDegreeRef.current
-    songIndexRef.current =
-      (songIndexRef.current + 1) % songs[selectedSongRef.current].length
+
+    let currentPartChords
+
+    if (patternIndexRef.current === -1) {
+      currentPartChords = songs[selectedSongRef.current][songs[selectedSongRef.current].pattern[0]]
+    } else {
+      currentPartChords = songs[selectedSongRef.current][songs[selectedSongRef.current].pattern[patternIndexRef.current]]
+    }
+
+    chordsIndexRef.current = (chordsIndexRef.current + 1) % currentPartChords.length
+
+    if (chordsIndexRef.current === 0) {
+      if (patternIndexRef.current === -1) {
+        patternIndexRef.current = 0
+      } else {
+        patternIndexRef.current = (patternIndexRef.current + 1) % songs[selectedSongRef.current].pattern.length
+      }
+      currentPartChords = songs[selectedSongRef.current][songs[selectedSongRef.current].pattern[patternIndexRef.current]]
+    }
+
     nextScaleDegreeRef.current =
-      songs[selectedSongRef.current][songIndexRef.current]
+      currentPartChords[chordsIndexRef.current]
   }
 
   const getNoteFromScaleDegree = () => {
