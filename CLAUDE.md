@@ -16,7 +16,8 @@ There is no test suite or linter. Netlify builds the site using `netlify.toml`.
 
 - `src/layouts/Layout.astro`: the HTML shell, including the GoatCounter analytics script.
 - `src/pages/index.astro`: the only page. It renders the app component with `client:load`.
-- `src/components/BluegrassBass.jsx`: the whole app, meaning the UI plus the Web Audio playback engine.
+- `src/components/BluegrassBass.jsx`: the UI.
+- `src/lib/player.js`: the Web Audio playback engine, written as plain JavaScript with no React.
 - `src/lib/music.js`: song and music-theory data.
 
 ### Music data (`src/lib/music.js`)
@@ -27,14 +28,13 @@ There is no test suite or linter. Netlify builds the site using `netlify.toml`.
 - `noteMap`: spelled note (including enharmonics like `Gb`, `E#`, `F##`) → sample name. The samples are one octave of mp3s in `public/`, fetched from `/${name}.mp3`. F#/Gb is stored as `Fsh.mp3`.
 - Adding a key means adding entries to `scales`, `rootFifthMap` and `noteMap`. Every spelling the new scale uses must also be a key in `rootFifthMap` and `noteMap`.
 
-### Playback engine
+### Playback engine (`src/lib/player.js`)
 
-- Uses the Web Audio API. `loadSound` creates the `AudioContext` and decodes every sample once. It must first run from a user gesture: the "enable sound" overlay, Start, or Space.
-- Notes are scheduled ahead on the `AudioContext` clock. A `requestAnimationFrame` loop (`checkTimeAndSchedule`) schedules the next beat once half a beat has passed since the last scheduled note.
-- Bass pattern: on a chord change it plays the root. When the chord repeats, it alternates root and fifth (`playRootRef`).
+- `createPlayer({ onChord })` returns `{ settings, loadSound, start, stop, toggle }`. The component makes one with `useState(() => createPlayer(...))`.
+- The UI writes straight into `player.settings` (`key`, `song`, `tempo`, `countIn`), and changes take effect on the next beat. Only `key` is also kept in React state, because the key buttons show which one is selected. The tempo, count-in and song controls are uncontrolled inputs.
+- `loadSound` creates the `AudioContext` and decodes every sample once. It must first run from a user gesture: the "enable sound" overlay, Start, or Space.
+- Notes are scheduled ahead on the `AudioContext` clock. A `requestAnimationFrame` loop (`tick`) schedules each note half a beat before it sounds.
+- Bass pattern: on a chord change it plays the root. When the chord repeats, it alternates root and fifth.
+- `nextNote` jumps back to the top of the song whenever `settings.song` differs from the song it was playing. `start` uses this to restart from the top.
 - The optional count-in schedules 4 `click` samples before the first note.
-- Stopping calls `stop()` on every source still in `activeSourcesRef`, which also cancels notes scheduled for the future. It then bumps `loopIdRef`. Each scheduling loop carries the `loopId` it started with and exits once that no longer matches, so a quick stop/start can't leave two loops running.
-
-### State pattern
-
-UI settings (key, song, tempo, count-in) live in React state for rendering and are mirrored into refs by their setters. The scheduling loop reads only refs, so it always sees current values, never values captured in an old closure.
+- Stopping calls `stop()` on every source still playing or queued, which cancels future notes, and then bumps `loopId`. Each `tick` loop carries the `loopId` it started with and exits once that no longer matches, so a quick stop/start can't leave two loops running.
