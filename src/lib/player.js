@@ -1,7 +1,8 @@
 import { sampleNames, scales, rootFifthMap, noteMap, songs } from './music'
 
 // Web Audio playback engine. `settings` can be changed at any time and takes effect on the next beat.
-export const createPlayer = ({ onChord }) => {
+// `onPosition` is called with { song, patternIndex, chordIndex } as each note sounds, and null on stop.
+export const createPlayer = ({ onPosition }) => {
   const settings = { key: 'Bb', song: 'old home place', tempo: 110, countIn: true }
 
   let audioContext = null
@@ -64,7 +65,6 @@ export const createPlayer = ({ onChord }) => {
     degree = nextDegree
 
     const root = scales[settings.key][degree - 1]
-    onChord(`${degree} / ${root}`)
     return noteMap[playRoot ? root : rootFifthMap[root]]
   }
 
@@ -73,6 +73,11 @@ export const createPlayer = ({ onChord }) => {
     if (runOutput !== output) return
     if (nextNoteTime - audioContext.currentTime <= beatSeconds() / 2) {
       playNoteAtTime(nextNote(), nextNoteTime)
+      const position = { song, patternIndex, chordIndex }
+      setTimeout(
+        () => runOutput === output && onPosition(position),
+        (nextNoteTime - audioContext.currentTime) * 1000,
+      )
       nextNoteTime += beatSeconds()
     }
     requestAnimationFrame(() => tick(runOutput))
@@ -103,6 +108,7 @@ export const createPlayer = ({ onChord }) => {
   const stop = () => {
     output?.disconnect()
     output = null
+    onPosition(null)
   }
 
   const toggle = () => (output ? stop() : start())
