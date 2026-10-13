@@ -7,10 +7,9 @@ export const createPlayer = ({ onChord }) => {
   let audioContext = null
   let loading = null
   const buffers = {}
-  const activeSources = new Set()
-  let running = false
-  // Incremented on every start/stop so a stale scheduling loop knows to exit
-  let loopId = 0
+  // Each run plays through its own output node, so stopping just disconnects it, silencing
+  // anything already scheduled. Null while stopped; a stale loop exits once it's been replaced.
+  let output = null
 
   // Position in the song
   let song, patternIndex, chordIndex, degree, playRoot, nextNoteTime
@@ -38,13 +37,10 @@ export const createPlayer = ({ onChord }) => {
     if (note === 'click') {
       gainNode.gain.value = 0.2
     } else {
-      const beat = beatSeconds()
       gainNode.gain.setValueAtTime(1, time)
-      gainNode.gain.linearRampToValueAtTime(0, time + beat - beat / 100)
+      gainNode.gain.linearRampToValueAtTime(0, time + 0.99 * beatSeconds())
     }
-    source.connect(gainNode).connect(audioContext.destination)
-    activeSources.add(source)
-    source.onended = () => activeSources.delete(source)
+    source.connect(gainNode).connect(output)
     source.start(time)
   }
 
@@ -73,23 +69,24 @@ export const createPlayer = ({ onChord }) => {
   }
 
   // Schedule each note half a beat before it sounds
-  const tick = id => {
-    if (id !== loopId) return
+  const tick = runOutput => {
+    if (runOutput !== output) return
     if (nextNoteTime - audioContext.currentTime <= beatSeconds() / 2) {
       playNoteAtTime(nextNote(), nextNoteTime)
       nextNoteTime += beatSeconds()
     }
-    requestAnimationFrame(() => tick(id))
+    requestAnimationFrame(() => tick(runOutput))
   }
 
   const start = async () => {
-    if (running) return
-    running = true
-    const id = ++loopId
+    if (output) return
+    const loaded = loadSound()
+    const runOutput = (output = audioContext.createGain())
+    runOutput.connect(audioContext.destination)
 
-    await loadSound()
+    await loaded
     await audioContext.resume()
-    if (id !== loopId) return
+    if (runOutput !== output) return
 
     song = null
     degree = null
@@ -100,17 +97,15 @@ export const createPlayer = ({ onChord }) => {
         nextNoteTime += beatSeconds()
       }
     }
-    tick(id)
+    tick(runOutput)
   }
 
   const stop = () => {
-    running = false
-    loopId++
-    activeSources.forEach(source => source.stop())
-    activeSources.clear()
+    output?.disconnect()
+    output = null
   }
 
-  const toggle = () => (running ? stop() : start())
+  const toggle = () => (output ? stop() : start())
 
   return { settings, loadSound, start, stop, toggle }
 }

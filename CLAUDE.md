@@ -35,6 +35,6 @@ There is no test suite or linter. Netlify builds the site using `netlify.toml`.
 - `loadSound` creates the `AudioContext` and decodes every sample once. It must first run from a user gesture: the "enable sound" overlay, Start, or Space.
 - Notes are scheduled ahead on the `AudioContext` clock. A `requestAnimationFrame` loop (`tick`) schedules each note half a beat before it sounds.
 - Bass pattern: on a chord change it plays the root. When the chord repeats, it alternates root and fifth.
-- `nextNote` jumps back to the top of the song whenever `settings.song` differs from the song it was playing. `start` uses this to restart from the top.
+- `nextNote` tracks its place by section (`patternIndex`) and by beat within that section (`chordIndex`). Keep this section-level position, because a planned feature will let the user choose the next section during playback. It jumps back to the top whenever `settings.song` differs from the song it was playing. `start` uses this to restart from the top.
 - The optional count-in schedules 4 `click` samples before the first note.
-- Stopping calls `stop()` on every source still playing or queued, which cancels future notes, and then bumps `loopId`. Each `tick` loop carries the `loopId` it started with and exits once that no longer matches, so a quick stop/start can't leave two loops running.
+- Each run plays through its own `output` gain node, which is `null` while stopped. Stopping disconnects that node, which silences notes already scheduled. Each `tick` loop carries the output node it started with and exits once that is no longer the current one, so a quick stop/start can't leave two loops running.
