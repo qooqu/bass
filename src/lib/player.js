@@ -1,4 +1,4 @@
-import { sampleNames, scales, rootFifthMap, noteMap, songs } from './music'
+import { BEATS_PER_BAR, sampleNames, scales, rootFifthMap, noteMap, songs } from './music'
 
 // Web Audio playback engine. `settings` can be changed at any time and takes effect on the next beat.
 // `onPosition` is called with { song, patternIndex, chordIndex } as each note sounds, and null on stop.
@@ -13,7 +13,7 @@ export const createPlayer = ({ onPosition }) => {
   let output = null
 
   // Position in the song
-  let song, patternIndex, chordIndex, degree, playRoot, nextNoteTime
+  let song, patternIndex, chordIndex, degree, nextNoteTime
 
   const beatSeconds = () => 60 / settings.tempo
 
@@ -60,8 +60,8 @@ export const createPlayer = ({ onPosition }) => {
     }
     const nextDegree = songs[song][pattern[patternIndex]][chordIndex]
 
-    // Root on a chord change, then alternate root and fifth while the chord holds
-    playRoot = nextDegree !== degree || !playRoot
+    // Root on the first beat of each bar and on chord changes, fifth otherwise
+    const playRoot = chordIndex % BEATS_PER_BAR === 0 || nextDegree !== degree
     degree = nextDegree
 
     const root = scales[settings.key][degree - 1]

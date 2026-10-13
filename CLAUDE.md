@@ -23,7 +23,7 @@ There is no test suite or linter. Netlify builds the site using `netlify.toml`.
 
 ### Music data (`src/lib/music.js`)
 
-- `songs`: each song has a `pattern` (an ordered list of section names, e.g. `['A', 'A', 'B', 'B']`) and one array per section. Each array entry is a **scale degree (1–7) for one beat**, so a chord held for a bar of 2/4 is written `1, 1`. The chart relies on this two-beats-per-bar layout (`BEATS_PER_BAR`). Playback loops through the pattern forever.
+- `songs`: each song has a `pattern` (an ordered list of section names, e.g. `['A', 'A', 'B', 'B']`) and one array per section. Each array entry is a **scale degree (1–7) for one beat**, so a chord held for a bar of 2/4 is written `1, 1`. The chart and the root/fifth pattern rely on this two-beats-per-bar layout (`BEATS_PER_BAR` in `music.js`). Playback loops through the pattern forever.
 - `scales`: each key's scale is **mixolydian** (flat 7th), so degree `7` gives the bVII chord (e.g. Bb in C).
 - `rootFifthMap`: spelled note → its fifth.
 - `noteMap`: spelled note (including enharmonics like `Gb`, `E#`, `F##`) → sample name. The samples are one octave of mp3s in `public/`, fetched from `/${name}.mp3`. F#/Gb is stored as `Fsh.mp3`.
@@ -35,7 +35,7 @@ There is no test suite or linter. Netlify builds the site using `netlify.toml`.
 - The UI writes straight into `player.settings` (`key`, `song`, `tempo`, `countIn`), and changes take effect on the next beat. `key` and `song` are also kept in React state, for the selected key button and the chart. Tempo and count-in are uncontrolled inputs.
 - `loadSound` creates the `AudioContext` and decodes every sample once. It must first run from a user gesture: the "enable sound" overlay, Start, or Space.
 - Notes are scheduled ahead on the `AudioContext` clock. A `requestAnimationFrame` loop (`tick`) schedules each note half a beat before it sounds. A `setTimeout` then calls `onPosition({ song, patternIndex, chordIndex })` when the note actually sounds, and `stop` calls `onPosition(null)`.
-- Bass pattern: on a chord change it plays the root. When the chord repeats, it alternates root and fifth.
+- Bass pattern: root on the first beat of each bar and on any chord change, fifth otherwise. This is tied to the bar so a section always starts on a root, even when the previous bar ended on the same chord.
 - `nextNote` tracks its place by section (`patternIndex`) and by beat within that section (`chordIndex`). Keep this section-level position, because a planned feature will let the user choose the next section during playback. It jumps back to the top whenever `settings.song` differs from the song it was playing. `start` uses this to restart from the top.
 - The optional count-in schedules 4 `click` samples before the first note.
 - Each run plays through its own `output` gain node, which is `null` while stopped. Stopping disconnects that node, which silences notes already scheduled. Each `tick` loop carries the output node it started with and exits once that is no longer the current one, so a quick stop/start can't leave two loops running.

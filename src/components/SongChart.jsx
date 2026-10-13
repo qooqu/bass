@@ -1,7 +1,4 @@
-import { songs } from '../lib/music'
-
-// Each entry in a section is one beat, two beats to the bar
-const BEATS_PER_BAR = 2
+import { BEATS_PER_BAR, songs } from '../lib/music'
 
 // Scales are mixolydian, so degree 7 is the flat seven
 const nashville = degree => (degree === 7 ? '♭7' : degree)

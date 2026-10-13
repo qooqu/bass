@@ -1,6 +1,9 @@
 // Sample files in public/, one octave. F#/Gb is stored as Fsh.mp3.
 export const sampleNames = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Fsh', 'G', 'Ab', 'A', 'Bb', 'B', 'click']
 
+// Each entry in a song section is one beat, two beats to the bar
+export const BEATS_PER_BAR = 2
+
 // Mixolydian (flat 7th), so degree 7 is the bVII chord
 export const scales = {
   C: ['C', 'D', 'E', 'F', 'G', 'A', 'Bb'],
