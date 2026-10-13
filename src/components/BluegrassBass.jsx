@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react'
 import { scales, songs } from '../lib/music'
 import { createPlayer } from '../lib/player'
+import SongChart from './SongChart'
 
 const controlClass = 'rounded border border-gray-300 bg-white px-3 py-2'
 const buttonClass = 'cursor-pointer rounded px-5 py-2 font-medium text-white uppercase shadow'
 
 const BluegrassBass = () => {
-  const [currentChord, setCurrentChord] = useState(null)
-  const [player] = useState(() => createPlayer({ onChord: setCurrentChord }))
+  const [position, setPosition] = useState(null)
+  const [player] = useState(() => createPlayer({ onPosition: setPosition }))
   const [soundEnabled, setSoundEnabled] = useState(false)
   const [key, setKey] = useState(player.settings.key)
+  const [song, setSong] = useState(player.settings.song)
 
   useEffect(() => {
     const handleKeyDown = event => {
@@ -65,8 +67,6 @@ const BluegrassBass = () => {
         </div>
       </fieldset>
 
-      <p>Current chord: {currentChord}</p>
-
       <label className="flex flex-col gap-1">
         <span className="text-muted">Tempo (BPM)</span>
         <input
@@ -96,8 +96,9 @@ const BluegrassBass = () => {
       <label className="flex flex-col gap-1">
         <span className="text-muted">Select Song:</span>
         <select
-          defaultValue={player.settings.song}
+          value={song}
           onChange={e => {
+            setSong(e.target.value)
             player.settings.song = e.target.value
           }}
           className={controlClass}
@@ -125,6 +126,8 @@ const BluegrassBass = () => {
           Stop
         </button>
       </div>
+
+      <SongChart song={song} position={position} />
     </div>
   )
 }
