@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #03a9f4;
+  --color-primary-dark: #0288d1;
+  --color-secondary: #0d47a1;
+  --color-muted: #5f6368;
+}
+
+@layer base {
+  h1 {
+    @apply text-4xl font-bold sm:text-5xl;
+  }
+}
