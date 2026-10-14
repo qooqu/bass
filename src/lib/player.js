@@ -20,7 +20,10 @@ export const createPlayer = ({ onPosition }) => {
   // Must first run from a user gesture to satisfy browser autoplay rules
   const loadSound = () => {
     if (!loading) {
+      // Play through the iPhone silent switch, like a music app (Safari 16.4+)
+      if (navigator.audioSession) navigator.audioSession.type = 'playback'
       audioContext = new (window.AudioContext || window.webkitAudioContext)()
+      audioContext.resume()
       loading = Promise.all(
         sampleNames.map(async name => {
           const response = await fetch(`/${name}.mp3`)
@@ -86,11 +89,13 @@ export const createPlayer = ({ onPosition }) => {
   const start = async () => {
     if (output) return
     const loaded = loadSound()
+    // iOS only allows resuming during the tap itself, so this must happen before any await
+    const resumed = audioContext.resume()
     const runOutput = (output = audioContext.createGain())
     runOutput.connect(audioContext.destination)
 
     await loaded
-    await audioContext.resume()
+    await resumed
     if (runOutput !== output) return
 
     song = null
