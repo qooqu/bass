@@ -25,18 +25,27 @@ const BluegrassBass = () => {
     if (songs[newSong].key) changeKey(songs[newSong].key)
   }
 
+  const enableSound = () => {
+    setSoundEnabled(true)
+    player.loadSound()
+  }
+
+  // The first Space only enables sound, like the overlay button; after that it starts and stops
   useEffect(() => {
     const handleKeyDown = event => {
       if (event.code === 'Space') {
         event.preventDefault()
-        setSoundEnabled(true)
-        player.toggle()
+        if (soundEnabled) {
+          player.toggle()
+        } else {
+          enableSound()
+        }
       }
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [player])
+  }, [player, soundEnabled])
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-5 p-5">
@@ -47,10 +56,7 @@ const BluegrassBass = () => {
           <button
             type="button"
             className={`${buttonClass} bg-primary`}
-            onClick={() => {
-              setSoundEnabled(true)
-              player.loadSound()
-            }}
+            onClick={enableSound}
           >
             enable sound
           </button>
