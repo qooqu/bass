@@ -1,13 +1,25 @@
 @import "tailwindcss";
 
+/* Fonts and palette shared with greenwold */
 @theme {
-  --color-primary: #03a9f4;
-  --color-secondary: #0d47a1;
-  --color-muted: #5f6368;
+  --font-sans: "Bricolage Grotesque", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+
+  --color-ink: #18201C;
+  --color-ink-soft: #39443E;
+  --color-muted: #4E5A53;
+  --color-ground: #F3F4EF;
+  --color-paper: #FBFBF8;
+  --color-well: #E5E9E1;
+  --color-line: #DDE1D8;
+  --color-accent: #1E6A47;
+  --color-accent-dark: #134A31;
+  /* Input borders: 3.8:1 on white, above the 3:1 minimum for form controls */
+  --color-control: #7A877F;
 }
 
-@layer base {
-  h1 {
-    @apply text-4xl font-bold sm:text-5xl;
+@layer components {
+  .eyebrow {
+    @apply font-mono text-xs font-medium tracking-[0.08em] text-muted uppercase;
   }
 }

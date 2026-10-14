@@ -12,12 +12,12 @@ There is no test suite or linter. Netlify builds the site using `netlify.toml`.
 
 ## Architecture
 
-"Bluegrass Bass" plays a root–fifth bluegrass bass line over a song's chord progression in any of 12 keys. It uses the same stack as the sibling `greenwold` repo: Astro 7, React 19 components embedded in Astro pages, and Tailwind 4 through `@tailwindcss/vite`, with theme colors defined in `src/styles/global.css`.
+"Bluegrass Bass" plays a root–fifth bluegrass bass line over a song's chord progression in any of 12 keys. It uses the same stack as the sibling `greenwold` repo: Astro 7, React 19 components embedded in Astro pages, and Tailwind 4 through `@tailwindcss/vite`, It also shares greenwold's look: Bricolage Grotesque and IBM Plex Mono (loaded in `Layout.astro`) and greenwold's palette, defined as theme tokens in `src/styles/global.css`, which also has a small `.eyebrow` label style. Interactive controls are at least 44px tall, and text and input borders meet WCAG contrast. The `control` token is the darker border used on inputs, because greenwold's `line` color is too faint for form controls.
 
 - `src/layouts/Layout.astro`: the HTML shell, including the GoatCounter analytics script.
 - `src/pages/index.astro`: the only page. It renders the app component with `client:load`.
 - `src/components/BluegrassBass.jsx`: the UI.
-- `src/components/SongChart.jsx`: a Nashville-number chart of the selected song. It shows the form (`pattern`) and each section's bars, four to a row, with split bars underlined and the chord currently sounding highlighted.
+- `src/components/SongChart.jsx`: a Nashville-number chart of the selected song. It shows the form (`pattern`) as a segmented row, then each section's bars, four to a row. Each bar shows its Nashville number and the chord name in the current key (♭ and ♯ are drawn by `Accidental.jsx`, because neither font has those characters). Split bars are underlined. In the section being played, the current bar is filled green and earlier bars are dimmed.
 - `src/lib/player.js`: the Web Audio playback engine, written as plain JavaScript with no React.
 - `src/lib/music.js`: song and music-theory data.
 

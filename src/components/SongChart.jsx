@@ -1,13 +1,23 @@
-import { BEATS_PER_BAR, songs } from '../lib/music'
+import { BEATS_PER_BAR, scales, songs } from '../lib/music'
+import Accidental from './Accidental'
 
 // Scales are mixolydian, so degree 7 is the flat seven
-const nashville = degree => (degree === 7 ? '♭7' : degree)
+const nashville = degree =>
+  degree === 7 ? (
+    <>
+      <Accidental type="flat" />7
+    </>
+  ) : (
+    degree
+  )
 
-// Shared by the form row and the bars so they match
-const gridClass = 'grid grid-cols-4 pt-px pl-px'
-const cellClass = '-mt-px -ml-px flex justify-center border border-gray-300 bg-white py-2'
-const labelClass = 'mb-1 text-muted'
-const pillClass = isCurrent => `rounded px-2 ${isCurrent ? 'bg-secondary text-white' : ''}`
+// Note names are spelled like 'Bb' or 'F#'
+const noteName = name => (
+  <>
+    {name[0]}
+    {name[1] && <Accidental type={name[1] === 'b' ? 'flat' : 'sharp'} />}
+  </>
+)
 
 // Group a bar's beats into chords, so a split bar has two
 const chordsInBar = (degrees, firstBeat) => {
@@ -22,20 +32,34 @@ const chordsInBar = (degrees, firstBeat) => {
   return chords
 }
 
-const SongChart = ({ song, position }) => {
+const barClass = {
+  current: 'bg-accent text-white',
+  played: 'bg-well text-muted',
+  upcoming: 'border border-line bg-paper text-ink',
+}
+
+const SongChart = ({ song, musicKey, position }) => {
   const { pattern } = songs[song]
   const current = position?.song === song ? position : null
   const currentSection = current && pattern[current.patternIndex]
+  const chordName = degree => noteName(scales[musicKey][degree - 1])
 
   return (
-    <div className="flex w-full max-w-md flex-col gap-4">
-      <section>
-        <h2 className={labelClass}>Form</h2>
-        <ol className={gridClass}>
+    <div className="flex flex-col gap-5">
+      <section className="flex flex-col gap-2">
+        <h2 className="eyebrow">Form</h2>
+        <ol
+          className="grid gap-1 rounded-xl bg-well p-1"
+          style={{ gridTemplateColumns: `repeat(${pattern.length}, minmax(0, 1fr))` }}
+        >
           {pattern.map((section, i) => (
-            // Smaller on phones so section names like "chorus" fit
-            <li key={i} className={`${cellClass} text-xl sm:text-2xl`}>
-              <span className={pillClass(i === current?.patternIndex)}>{section}</span>
+            <li
+              key={i}
+              className={`flex h-11 items-center justify-center rounded-[9px] text-[17px] ${
+                i === current?.patternIndex ? 'bg-accent font-semibold text-white' : 'text-ink-soft'
+              }`}
+            >
+              {section}
             </li>
           ))}
         </ol>
@@ -44,25 +68,48 @@ const SongChart = ({ song, position }) => {
       {[...new Set(pattern)].map(section => {
         const degrees = songs[song][section]
         const firstBeats = degrees.map((_, beat) => beat).filter(beat => beat % BEATS_PER_BAR === 0)
+        const beat = section === currentSection ? current.chordIndex : null
 
         return (
-          <section key={section}>
-            <h2 className={labelClass}>{section}</h2>
-            <div className={gridClass}>
+          <section key={section} className="flex flex-col gap-2">
+            <div className="flex items-baseline justify-between">
+              <h2 className="eyebrow">{section}</h2>
+              <span className="font-mono text-xs text-muted">{firstBeats.length} bars</span>
+            </div>
+            <div className="grid grid-cols-4 gap-1">
               {firstBeats.map(firstBeat => {
                 const chords = chordsInBar(degrees, firstBeat)
+                const split = chords.length > 1
+                const state =
+                  beat === null || beat < firstBeat
+                    ? 'upcoming'
+                    : beat < firstBeat + BEATS_PER_BAR
+                      ? 'current'
+                      : 'played'
+
                 return (
-                  <div key={firstBeat} className={`${cellClass} text-2xl`}>
+                  <div
+                    key={firstBeat}
+                    className={`flex h-14 flex-col items-center justify-center rounded-lg ${barClass[state]}`}
+                  >
                     {/* Nashville convention: underline a split bar */}
-                    <div className={`flex gap-1 ${chords.length > 1 ? 'border-b-2 border-current' : ''}`}>
+                    <div className={`flex ${split ? 'border-b-2 border-current' : ''}`}>
                       {chords.map(({ degree, beats }) => (
                         <span
                           key={beats[0]}
-                          className={pillClass(
-                            section === currentSection && beats.includes(current.chordIndex),
-                          )}
+                          className={`w-8 rounded text-center font-mono text-2xl/7 font-medium ${
+                            // In a split bar, mark which half is sounding
+                            split && state === 'current' && beats.includes(beat) ? 'bg-white text-accent' : ''
+                          }`}
                         >
                           {nashville(degree)}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="flex">
+                      {chords.map(({ degree, beats }) => (
+                        <span key={beats[0]} className="w-8 text-center text-xs/4">
+                          {chordName(degree)}
                         </span>
                       ))}
                     </div>
