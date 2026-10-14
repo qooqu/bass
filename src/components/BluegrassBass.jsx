@@ -3,8 +3,8 @@ import { scales, songs } from '../lib/music'
 import { createPlayer } from '../lib/player'
 import SongChart from './SongChart'
 
-const controlClass = 'h-10 rounded border border-gray-300 bg-white px-3'
-const buttonClass = 'cursor-pointer rounded px-5 py-2 font-medium text-white uppercase shadow'
+// 44px tall, the minimum comfortable touch target
+const controlClass = 'h-11 rounded-lg border border-control bg-white px-3 text-[17px] text-ink'
 
 // 80 to 150 BPM in steps of 5
 const tempos = Array.from({ length: 15 }, (_, i) => 80 + i * 5)
@@ -58,25 +58,25 @@ const BluegrassBass = () => {
   }, [player, soundEnabled])
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-5 p-5">
-      <h1>Bluegrass Bass</h1>
+    <div className="mx-auto flex min-h-screen w-full max-w-md flex-col gap-5 px-4 py-7">
+      <h1 className="text-3xl font-[750] tracking-tight">Bluegrass Bass</h1>
 
       {!soundEnabled && (
-        <div className="fixed inset-0 z-10 flex items-center justify-center bg-black/50">
+        <div className="fixed inset-0 z-10 flex items-center justify-center bg-ink/60">
           <button
             type="button"
-            className={`${buttonClass} bg-primary`}
+            className="h-11 cursor-pointer rounded-[10px] bg-accent px-6 text-[17px] font-semibold text-white"
             onClick={enableSound}
           >
-            enable sound
+            Enable sound
           </button>
         </div>
       )}
 
       {/* On phones the song gets its own line, with key, tempo and the button below */}
-      <div className="grid w-full max-w-md grid-cols-[1fr_1fr_auto] gap-3 sm:grid-cols-[1fr_auto_auto_auto]">
-        <label className="col-span-3 flex min-w-0 flex-col gap-1 sm:col-span-1">
-          <span className="text-muted">Song</span>
+      <div className="grid grid-cols-[1fr_1fr_auto] gap-3 rounded-[14px] border border-line bg-paper p-3.5 sm:grid-cols-[1fr_auto_auto_auto]">
+        <label className="col-span-3 flex min-w-0 flex-col gap-1.5 sm:col-span-1">
+          <span className="eyebrow">Song</span>
           <select
             value={song}
             onChange={e => changeSong(e.target.value)}
@@ -90,8 +90,8 @@ const BluegrassBass = () => {
           </select>
         </label>
 
-        <label className="flex flex-col gap-1">
-          <span className="text-muted">Key</span>
+        <label className="flex flex-col gap-1.5">
+          <span className="eyebrow">Key</span>
           <select value={key} onChange={e => changeKey(e.target.value)} className={`${controlClass} w-full`}>
             {Object.keys(scales).map(k => (
               <option key={k} value={k}>
@@ -101,8 +101,8 @@ const BluegrassBass = () => {
           </select>
         </label>
 
-        <label className="flex flex-col gap-1">
-          <span className="text-muted">Tempo</span>
+        <label className="flex flex-col gap-1.5">
+          <span className="eyebrow">Tempo</span>
           <select
             defaultValue={player.settings.tempo}
             onChange={e => {
@@ -122,18 +122,18 @@ const BluegrassBass = () => {
           type="button"
           aria-label={playing ? 'Stop' : 'Start'}
           title={playing ? 'Stop (Space)' : 'Start (Space)'}
-          className={`flex size-10 cursor-pointer items-center justify-center self-end rounded border text-white ${
-            playing ? 'border-secondary bg-secondary' : 'border-primary bg-primary'
+          className={`flex size-11 cursor-pointer items-center justify-center self-end rounded-[10px] text-white ${
+            playing ? 'bg-accent-dark' : 'bg-accent'
           }`}
           onClick={togglePlayback}
         >
           <svg viewBox="0 0 16 16" className="size-4 fill-current" aria-hidden="true">
-            {playing ? <rect x="2" y="2" width="12" height="12" rx="1" /> : <path d="M4 2l10 6-10 6z" />}
+            {playing ? <rect x="3" y="3" width="10" height="10" rx="1.5" /> : <path d="M4 2l10 6-10 6z" />}
           </svg>
         </button>
       </div>
 
-      <SongChart song={song} position={position} />
+      <SongChart song={song} musicKey={key} position={position} />
     </div>
   )
 }
