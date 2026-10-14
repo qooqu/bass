@@ -3,13 +3,17 @@ import { scales, songs } from '../lib/music'
 import { createPlayer } from '../lib/player'
 import SongChart from './SongChart'
 
-const controlClass = 'rounded border border-gray-300 bg-white px-3 py-2'
+const controlClass = 'h-10 rounded border border-gray-300 bg-white px-3'
 const buttonClass = 'cursor-pointer rounded px-5 py-2 font-medium text-white uppercase shadow'
+
+// 80 to 150 BPM in steps of 5
+const tempos = Array.from({ length: 15 }, (_, i) => 80 + i * 5)
 
 const BluegrassBass = () => {
   const [position, setPosition] = useState(null)
   const [player] = useState(() => createPlayer({ onPosition: setPosition }))
   const [soundEnabled, setSoundEnabled] = useState(false)
+  const [playing, setPlaying] = useState(false)
   const [key, setKey] = useState(player.settings.key)
   const [song, setSong] = useState(player.settings.song)
 
@@ -30,13 +34,19 @@ const BluegrassBass = () => {
     player.loadSound()
   }
 
+  const togglePlayback = () => {
+    setSoundEnabled(true)
+    player.toggle()
+    setPlaying(player.isPlaying())
+  }
+
   // The first Space only enables sound, like the overlay button; after that it starts and stops
   useEffect(() => {
     const handleKeyDown = event => {
       if (event.code === 'Space') {
         event.preventDefault()
         if (soundEnabled) {
-          player.toggle()
+          togglePlayback()
         } else {
           enableSound()
         }
@@ -63,79 +73,63 @@ const BluegrassBass = () => {
         </div>
       )}
 
-      <fieldset>
-        <legend className="mb-2 text-muted">Key:</legend>
-        <div className="grid grid-cols-6 gap-px overflow-hidden rounded bg-white sm:grid-cols-12">
-          {Object.keys(scales).map(k => (
-            <button
-              key={k}
-              type="button"
-              aria-pressed={k === key}
-              onClick={() => changeKey(k)}
-              className={`cursor-pointer px-4 py-3 text-white ${
-                k === key ? 'bg-secondary' : 'bg-primary hover:bg-primary-dark'
-              }`}
-            >
-              {k}
-            </button>
-          ))}
-        </div>
-      </fieldset>
+      {/* On phones the song gets its own line, with key, tempo and the button below */}
+      <div className="grid w-full max-w-md grid-cols-[1fr_1fr_auto] gap-3 sm:grid-cols-[1fr_auto_auto_auto]">
+        <label className="col-span-3 flex min-w-0 flex-col gap-1 sm:col-span-1">
+          <span className="text-muted">Song</span>
+          <select
+            value={song}
+            onChange={e => changeSong(e.target.value)}
+            className={`${controlClass} w-full min-w-0`}
+          >
+            {Object.keys(songs).map(songName => (
+              <option key={songName} value={songName}>
+                {songName}
+              </option>
+            ))}
+          </select>
+        </label>
 
-      <label className="flex flex-col gap-1">
-        <span className="text-muted">Tempo (BPM)</span>
-        <input
-          type="number"
-          min={30}
-          max={300}
-          defaultValue={player.settings.tempo}
-          onChange={e => {
-            if (e.target.valueAsNumber > 0) player.settings.tempo = e.target.valueAsNumber
-          }}
-          className={controlClass}
-        />
-      </label>
+        <label className="flex flex-col gap-1">
+          <span className="text-muted">Key</span>
+          <select value={key} onChange={e => changeKey(e.target.value)} className={`${controlClass} w-full`}>
+            {Object.keys(scales).map(k => (
+              <option key={k} value={k}>
+                {k}
+              </option>
+            ))}
+          </select>
+        </label>
 
-      <label className="flex items-center gap-2">
-        <input
-          type="checkbox"
-          defaultChecked={player.settings.countIn}
-          onChange={e => {
-            player.settings.countIn = e.target.checked
-          }}
-          className="size-5 accent-primary"
-        />
-        Count In
-      </label>
+        <label className="flex flex-col gap-1">
+          <span className="text-muted">Tempo</span>
+          <select
+            defaultValue={player.settings.tempo}
+            onChange={e => {
+              player.settings.tempo = Number(e.target.value)
+            }}
+            className={`${controlClass} w-full`}
+          >
+            {tempos.map(tempo => (
+              <option key={tempo} value={tempo}>
+                {tempo}
+              </option>
+            ))}
+          </select>
+        </label>
 
-      <label className="flex flex-col gap-1">
-        <span className="text-muted">Select Song:</span>
-        <select
-          value={song}
-          onChange={e => changeSong(e.target.value)}
-          className={controlClass}
-        >
-          {Object.keys(songs).map(songName => (
-            <option key={songName} value={songName}>
-              {songName}
-            </option>
-          ))}
-        </select>
-      </label>
-
-      <div className="flex gap-4">
         <button
           type="button"
-          className={`${buttonClass} bg-primary`}
-          onClick={() => {
-            setSoundEnabled(true)
-            player.start()
-          }}
+          aria-label={playing ? 'Stop' : 'Start'}
+          title={playing ? 'Stop (Space)' : 'Start (Space)'}
+          className={`flex size-10 cursor-pointer items-center justify-center self-end rounded border text-white ${
+            playing ? 'border-secondary bg-secondary' : 'border-primary bg-primary'
+          }`}
+          onClick={togglePlayback}
         >
-          Start
-        </button>
-        <button type="button" className={`${buttonClass} bg-secondary`} onClick={player.stop}>
-          Stop
+          <svg viewBox="0 0 16 16" className="size-4 fill-current" aria-hidden="true">
+            {playing ? <rect x="2" y="2" width="12" height="12" rx="1" /> : <path d="M4 2l10 6-10 6z" />}
+          </svg>
         </button>
       </div>
 

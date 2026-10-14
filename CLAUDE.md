@@ -31,9 +31,9 @@ There is no test suite or linter. Netlify builds the site using `netlify.toml`.
 
 ### Playback engine (`src/lib/player.js`)
 
-- `createPlayer({ onPosition })` returns `{ settings, loadSound, start, stop, toggle }`. The component makes one with `useState(() => createPlayer(...))`.
-- The UI writes straight into `player.settings` (`key`, `song`, `tempo`, `countIn`), and changes take effect on the next beat. `key` and `song` are also kept in React state, for the selected key button and the chart. Tempo and count-in are uncontrolled inputs.
-- `loadSound` creates the `AudioContext` and decodes every sample once. It must first run from a user gesture: the "enable sound" overlay, Start, or Space.
+- `createPlayer({ onPosition })` returns `{ settings, loadSound, toggle, isPlaying }`. The component makes one with `useState(() => createPlayer(...))`.
+- The UI writes straight into `player.settings` (`key`, `song`, `tempo`, `countIn`), and changes take effect on the next beat. `key` and `song` are also kept in React state, because they drive the song and key dropdowns and the chart. Tempo is an uncontrolled dropdown (80–150 BPM in steps of 5). Count-in has no control in the UI and stays on (`settings.countIn`).
+- `loadSound` creates the `AudioContext` and decodes every sample once. It must first run from a user gesture: the "enable sound" overlay, the Start/Stop button, or Space.
 - Notes are scheduled ahead on the `AudioContext` clock. A `requestAnimationFrame` loop (`tick`) schedules each note half a beat before it sounds. A `setTimeout` then calls `onPosition({ song, patternIndex, chordIndex })` when the note actually sounds, and `stop` calls `onPosition(null)`.
 - Bass pattern: root on the first beat of each bar and on any chord change, fifth otherwise. This is tied to the bar so a section always starts on a root, even when the previous bar ended on the same chord.
 - `nextNote` tracks its place by section (`patternIndex`) and by beat within that section (`chordIndex`). Keep this section-level position, because a planned feature will let the user choose the next section during playback. It jumps back to the top whenever `settings.song` differs from the song it was playing. `start` uses this to restart from the top.

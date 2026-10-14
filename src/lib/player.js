@@ -111,7 +111,9 @@ export const createPlayer = ({ onPosition }) => {
     onPosition(null)
   }
 
-  const toggle = () => (output ? stop() : start())
+  const isPlaying = () => output !== null
 
-  return { settings, loadSound, start, stop, toggle }
+  const toggle = () => (isPlaying() ? stop() : start())
+
+  return { settings, loadSound, toggle, isPlaying }
 }
