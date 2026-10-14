@@ -23,7 +23,7 @@ There is no test suite or linter. Netlify builds the site using `netlify.toml`.
 
 ### Music data (`src/lib/music.js`)
 
-- `songs`: each song has a `pattern` (an ordered list of section names, e.g. `['A', 'A', 'B', 'B']`) and one array per section. Each array entry is a **scale degree (1–7) for one beat**, so a chord held for a bar of 2/4 is written `1, 1`. The chart and the root/fifth pattern rely on this two-beats-per-bar layout (`BEATS_PER_BAR` in `music.js`). Playback loops through the pattern forever.
+- `songs`: each song has an optional `key` (a key from `scales`, used for fiddle tunes; selecting the song switches to it), a `pattern` (an ordered list of section names, e.g. `['A', 'A', 'B', 'B']`) and one array per section. Each array entry is a **scale degree (1–7) for one beat**, so a chord held for a bar of 2/4 is written `1, 1`. The chart and the root/fifth pattern rely on this two-beats-per-bar layout (`BEATS_PER_BAR` in `music.js`). Playback loops through the pattern forever.
 - `scales`: each key's scale is **mixolydian** (flat 7th), so degree `7` gives the bVII chord (e.g. Bb in C).
 - `rootFifthMap`: spelled note → its fifth.
 - `noteMap`: spelled note (including enharmonics like `Gb`, `E#`, `F##`) → sample name. The samples are one octave of mp3s in `public/`, fetched from `/${name}.mp3`. F#/Gb is stored as `Fsh.mp3`.

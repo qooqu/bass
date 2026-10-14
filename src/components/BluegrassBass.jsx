@@ -13,6 +13,18 @@ const BluegrassBass = () => {
   const [key, setKey] = useState(player.settings.key)
   const [song, setSong] = useState(player.settings.song)
 
+  const changeKey = newKey => {
+    setKey(newKey)
+    player.settings.key = newKey
+  }
+
+  // Fiddle tunes have a standard key, so switch to it
+  const changeSong = newSong => {
+    setSong(newSong)
+    player.settings.song = newSong
+    if (songs[newSong].key) changeKey(songs[newSong].key)
+  }
+
   useEffect(() => {
     const handleKeyDown = event => {
       if (event.code === 'Space') {
@@ -53,10 +65,7 @@ const BluegrassBass = () => {
               key={k}
               type="button"
               aria-pressed={k === key}
-              onClick={() => {
-                setKey(k)
-                player.settings.key = k
-              }}
+              onClick={() => changeKey(k)}
               className={`cursor-pointer px-4 py-3 text-white ${
                 k === key ? 'bg-secondary' : 'bg-primary hover:bg-primary-dark'
               }`}
@@ -97,10 +106,7 @@ const BluegrassBass = () => {
         <span className="text-muted">Select Song:</span>
         <select
           value={song}
-          onChange={e => {
-            setSong(e.target.value)
-            player.settings.song = e.target.value
-          }}
+          onChange={e => changeSong(e.target.value)}
           className={controlClass}
         >
           {Object.keys(songs).map(songName => (
